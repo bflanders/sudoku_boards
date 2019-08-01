@@ -2,7 +2,7 @@
 Create solved boards first, then make puzzles.
 
 ## Introduction
-I ran across this problem while checking out /r/learnpython on Reddit. /u/TeamTuck wrote some code that created "completed" sudoku boards (all cells completed with the row, column, and "block" constraints in place. The code was good, but I thought I'd take a crack at solving it. I've tried many approaches and they all went nowhere...until recently. I had the clarity need to think about the problem in The Right Way. For closure, here's me telling you my thought process.
+I ran across this problem while checking out /r/learnpython on Reddit. /u/TeamTuck wrote some code that created "completed" sudoku boards (all cells in a sudoku board filled in with a number with uniqueness across rows, columns, and "blocks"). I thought I'd take a crack at solving it. I've tried many approaches and they all went nowhere...until recently. I had the clarity need to think about the problem in The Right Way (c). For closure, here's me telling you my thought process.
 
 ## Mistakes were made
 I made a lot of mistakes. I think the failure I was having was that I though that you could do things sequentially, using a cell by cell walk, with the idea that if you find that you've taken the wrong path, just back up and choose a better one. That becomes a problem if you haven't been recording things right. I kept creating solutions where backtracking wasn't done correctly. I essentially destroyed the necessry information that I could recover from it.  
@@ -35,6 +35,7 @@ Given that the first block contains 1,2, and 3, we can't choose for the next bra
 
 So to be a little more specific the algorithm is such: define a list of all branches. Pop off the branches list one branch and determine what new, viable branches can come from that one branch (if any). If the next branch leads to a completed board, record that result and don't push anything back on to the branches list, else, push the next branch onto the branches list. Rinse, lather, repeat until we have no more entries in the branches list. That's it. You could call this a "depth" first search of all possible branches depending on how you set up your code.
 
+## What is a board?
 Ok, some more things to consider. So the first thing to note is that the way the math works out, it's "easier" to store the board as a list of 81 numbers, instead of a list of lists. It's easier if the board is one-dimensional. The initial state of the board could be defined as:
 
 ```python
@@ -64,6 +65,7 @@ Seeing that we are interested in building new sequences from old sequences, let'
 
 I think you'll see how that will be useful later.
 
+## What are my choices (what's left)?
 Ok, so let's talk about evaluating the next possible squares to fill out. Given a partially filled board (or sequence, we can talk about them interchangeably since we can use code to go back and forth between the two), what are all the next possible boards? We need a way of knowing what choices we have left, what numbers are "unpicked" given the row, column, block constraints. What about those constraints? Here we need to talk about how we can navigate the board.
 
 Given a board, what are all the numbers that share the same row as a given cell. So for instance, if I show you to following partial board: 
@@ -163,6 +165,7 @@ So that mens that we know what numbers are "unpicked" given a partially filled b
         return [k for k in range(1, 10) if k not in p]
 ```
 
+## Next
 Next let's think about how to create the "next sequence" or branch given an existing branch. Here's the code:
 
 ```python
@@ -181,6 +184,7 @@ Next let's think about how to create the "next sequence" or branch given an exis
 
 I've failed to mention, but I do have a global variable `boards` which keeps a record of the all completed, valid Sudoku boards. Notice that with this code, non-viable branches die of natural causes and new, viable ones are created fo the next iteration.
 
+## Branching
 Here is the code that manages the `branches` list:
 
 ```python
@@ -194,6 +198,7 @@ Here is the code that manages the `branches` list:
     print(f'Final: {len(boards)}')
 ```
 
+# Board printing
 To look at any sequence (or branch) partial or complete use this `print_board` method:
 
 ```python
@@ -207,7 +212,6 @@ To look at any sequence (or branch) partial or complete use this `print_board` m
         print()
 ```
 
-I've set the code to run with a seed of '123456789' and I am up to 1.4 million unique boards already. I am hoping that this can all fit into a database and the that the number won't be too astronomical, but I might be wrong on that. 
-I really shoud committing the solutions to memory just in case I need to do this in chunks...
+I've set the code to run with a seed of '123456789' and I am hoping that this can all fit into a database and the that the number won't be too astronomical, but I might be wrong on that. 
 
-I'll leave it up to the reader to pick a random seen and to implement the early out (should happend really fast). 
+I'll leave it up to the reader to pick a random seen and to implement the early out (should happend really fast) to produce random board. 
