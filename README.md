@@ -198,7 +198,7 @@ Here is the code that manages the `branches` list:
     print(f'Final: {len(boards)}')
 ```
 
-# Board printing
+## Board printing
 To look at any sequence (or branch) partial or complete use this `print_board` method:
 
 ```python
