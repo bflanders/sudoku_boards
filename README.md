@@ -68,12 +68,14 @@ Ok, so let's talk about evaluating the next possible squares to fill out. Given 
 
 Given a board, what are all the numbers that share the same row as a given cell. So for instance, if I show you to following partial board: 
 
+```
 1 2 3 4 5 6 7 8 9
 9 8 7 3 2 1 6 5 4
 6 5 4 9 8 7 3 2 1
 8 9 6 7 4 5 2 1 3
 4 7 2 1 6 3 8 9 5
 5 3 1 2 .
+```
 
 What numbers have been already seen in the same row as the "."? You can look at it and say "5,3,1,2" easily. But let's do that in code. Notice the dot is in position 49 (0-based indexing). We should get that answer if we do the following snippet:
 
@@ -102,28 +104,29 @@ For columns we use the operator `%`. So we could combine the two:
 
 For "blocks" you have to think about this a little more and it depends on how you want to associate blocks with numbers. I chose to number the blocks for left to right, top to bottom like so
 
-000 111 222
-000 111 222
-000 111 222
-333 444 555
-333 444 555
-333 444 555
-666 777 888
-666 777 888
-666 777 888
-
+```
+0 0 0 1 1 1 2 2 2
+0 0 0 1 1 1 2 2 2
+0 0 0 1 1 1 2 2 2
+3 3 3 4 4 4 5 5 5
+3 3 3 4 4 4 5 5 5
+3 3 3 4 4 4 5 5 5
+6 6 6 7 7 7 8 8 8
+6 6 6 7 7 7 8 8 8
+6 6 6 7 7 7 8 8 8
+```
 or
-
+```
 0 1 2
 3 4 5
 6 7 8
-
+```
 You could have done it "column-wise" like this:
-
+```
 0 3 6
 1 4 7
 2 5 8
-
+```
 The question is how do you associate each cell with a block? Here's the answer, I'll let you ponder this (because we are labeling blocks "row-wise):
 
 ```python
