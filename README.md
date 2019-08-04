@@ -215,3 +215,143 @@ To look at any sequence (or branch) partial or complete use this `print_board` m
 I've set the code to run with a seed of '123456789' and I am hoping that this can all fit into a database and the that the number won't be too astronomical, but I might be wrong on that. 
 
 I'll leave it up to the reader to pick a random seen and to implement the early out (should happend really fast) to produce random board. 
+
+## That works...sort of 
+The problem with the approach so far is that it builds a board left to right, top to bottom. If we add one little twist, we can open up a while other set of possibilities. What if instead of "knowing" where the next square to fill in is, what if we went looking for it? What if all the branches contained 81 values and blanks were were encoded as a blank?
+
+We could continue to have a board constructor, but we'd also get a silver for free! And with a tiny bit more code we could get a puzzle builder. 
+
+Here's how: for a puzzle builder we start off with a complete board. Then we randomly choose a square to set to blank and we ask how many solutions it has. If it has only one, then we can choose another square at random so set to blank. We keep doing this until we mask a square and that leads to more than one solution. Then we say, "Never mind, rest that square to its old value and now you have a puzzle." 
+
+You might have a really hard puzzle though. If you've masked the minimum amount of cells that lead to a unique solution, then the human solver might have to employ advanced techniques to solve it. But we'll come back to that discussion in the future. 
+
+## Going back
+What needs to change? A couple of things. The first thing I want to change is that I had too many complimentary operations where I was converting back and forth between strings and integers. The main tenant of Sudoku is that we only need unique symbols for our puzzles. So let's choose strings for square values and if a square is unassigned, then we will put in a space or blank. Now instead of looking for 0s, we'll be looking for blanks. 
+
+The next change is that I don't like the the way "next_seq" modifies the global variable "board". I think it's better to have the function return the next sequence (aka branch) and a board if found. So let's stuff them into a dict with the "branches" result having a more dimensions than previously befined: res = { 'board': list[str], 'branches': deque([ (branch=list[str], blanks=list[int], num_s=int)] }. 
+
+This is an abuse of syntax, but essentially, each of the branches has three bits of information: branch is a list of 81 characters representing a partially filled out board, blanks is a list of which offset of the branch contains a blank, and "num_s" is the number of blanks in "blanks". 
+
+## to_branch
+Here's the new code for the replacement for the "to_branch" function, which take a string sequence and converts it to the branch tuple discussed earlier:
+
+```python
+def to_branch(seq):
+    branch = []
+    blanks = []
+    len_seq = len(seq)
+    for i in range(81):
+        if i < len_seq:
+            if seq[i]!=' ':
+                branch.append(seq[i])
+            else:
+                branch.append(' ')
+                blanks.append(i)
+        else:
+            branch.append(' ')
+            blanks.append(i)
+    return (branch, blanks, len(blanks))
+
+```
+
+It's a little more involved, but it will help out in the next method.
+
+## next_seq
+The purpose of this function to find the next branch or a completed board. Only one of the values of the dict will be nonempty at a time, but we'll live with the two keys. 
+```python
+def next_seq(branch_blanks):
+    # Find the first blank
+    res = {
+        'board': None
+        ,'branches': deque() # (branch: list[str], blanks: list[int], num_s: int)
+    }
+    branch, blanks, num_s = branch_blanks
+    if num_s==1:
+        left = unpicked(branch, blanks[0])
+        if left: 
+            branch[blanks[0]] = left[0]
+            res['board'] = to_seq(branch)
+            return res
+    else:
+        new_s, z = blanks[1:],blanks[0]
+        for k in unpicked(branch, z):
+            new_branch = branch[:] # performant copy
+            new_branch[z]=k # set 'number'
+            res['branches'].append((new_branch, new_s, num_s-1))
+        return res
+```
+
+## unpicked
+The purpose of this function is to determine what has been picked yet. 
+
+```python
+def unpicked(branch, c):
+    c = int(c)
+    p = []
+    if branch[c]!=' ': return p
+    for i, k in enumerate(branch):
+        if k==' ' or i==c: continue
+        if i//9==c//9:
+            p.append(k)
+        if i%9==c%9:
+            p.append(k)
+        if (i//9//3)==(c//9//3) and (i%9//3)==(c%9//3):
+            p.append(k)
+    return [str(k) for k in range(1, 10) if str(k) not in p]
+```
+
+## solve
+The purpose of the function is to find all possible solutions (up to "out" number, which stands for "early out"). The default is one. Later we'll choose an "out" value of 2.
+
+```python
+def solve(branches, out=1):
+    solutions = []
+    while branches:
+        nxt = next_seq(branches.pop())
+        if nxt['board']:
+            solutions.append(nxt['board'])
+        else:
+            branches.extend(nxt['branches'])
+        if len(solutions)>=out:
+            return solutions
+    return solutions
+```
+
+## Main logic
+Running this code will create a random filled in Sudoku board.
+
+```python
+one_to_nine = list('123456789')
+shuffle(one_to_nine)
+boards = []
+branch = to_branch(''.join(one_to_nine))
+branches = deque()
+branches.append(branch)
+solved = solve(branches)            
+print_board(solved[0])
+```
+
+##Puzzle maker
+Below is the code that will make a puzzle based o maths pseudo-code discussed before: replace a random number in the grid with a blank and try to solve it. It you can, the choose the next random cell to mask. Do this until there is more than one solution, in which case the state of the board before then last change is a good enough puzzle. 
+
+```python
+puzzle = list(solved[0]) 
+blanks = [i for i in range(81)]
+shuffle(blanks)
+for i, z in enumerate(blanks):
+    k = puzzle[z]
+    puzzle[z] = ' '
+    # Check for single solution
+    branch = to_branch(''.join(puzzle))
+    branches = deque()
+    branches.append(branch)
+    solutions = solve(branches, out=2)
+    # If so, remove one more and check
+    if len(solutions)==1: continue
+    # If not, then put the square back and you're done
+    else:
+        puzzle[z] = k
+        break
+        
+print_board(puzzle)
+```
