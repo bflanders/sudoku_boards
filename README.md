@@ -49,7 +49,7 @@ If we continued to do this, some branches won't have any other choices left. I c
 -------------------
 ```
 
-What can I put in the place of '_'? Nothing we've exhausted all the choices. Therefore the procedure to determine the next_branch('123456789456123') -> []. 
+What can I put in the place of '_'? Nothing, we've exhausted all the choices. Therefore the procedure to determine the next_branch('123456789456123') should yield []. 
 
 Now at some point, the length of our branching sequence will be 81 characters long. Ta-da! That's a solution. So that's the idea we need a pull sequences on and off a list, adding viable branches back on if there are any and discarding any non-viable branches or completed boards and storing them somewhere else. Adding and removing elements often is best handled using a double ended queue from the `collections` module. 
 
