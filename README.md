@@ -1,5 +1,5 @@
 # sudoku_boards
-Create solved boards first, then make puzzles.
+Create solved boards first, then make puzzles. See puzzle_maker.py. 
 
 ## Introduction
 Most programmers are familiar with building a Sudoku solver. I ran across a discussion thread on Reddit where someone was trying to create "completed" sudoku boards (an 9 X 9 grid of numbers with uniqueness across rows, columns, and "blocks"). That seemed fun. I also thought that if you can make a completed board, you could tweak the algorithm to develop puzzles (partially filled board that only have one solution). Here is what we are going to do:
