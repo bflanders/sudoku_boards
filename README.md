@@ -9,7 +9,7 @@ Most programmers are familiar with building a Sudoku solver. I ran across a disc
     * Make a puzzler (something that can make puzzles) 
 
 ## Mistakes were made
-I made a lot of mistakes. I trying a cell by cell walk, with the idea that if I took a wrong path, just back up and choose a better one. That becomes a problem if you haven't been recording things right. I kept creating solutions where backtracking wasn't done correctly. It was hard to backtrack. Let's look a simple first approach. 
+I made a lot of mistakes. I trying a cell by cell walk, with the idea that if I took a wrong path, just back up and choose a better one. I kept creating solutions where backtracking wasn't done correctly. Let's look at a simple first approach. 
 
 ```python
 
