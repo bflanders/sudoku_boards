@@ -2,7 +2,7 @@
 Create solved boards first, then make puzzles.
 
 ## Introduction
-Most people's interactions with computers and Sudoku is creating a solver in a computer science course. I ran across a discussion thread on Reddit where someone was trying to create "completed" sudoku boards (an 9 X 9 grid of numbers with uniqueness across rows, columns, and "blocks"). That's a fun spin on the problem. I also thought that if you can make a completed board, you could tweak the algorithm to develop puzzles (creating masks of the board that will lead to a unique solution). Here is what we are going to do:
+Most programmers are familiar with building a Sudoku solver. I ran across a discussion thread on Reddit where someone was trying to create "completed" sudoku boards (an 9 X 9 grid of numbers with uniqueness across rows, columns, and "blocks"). That seemed fun. I also thought that if you can make a completed board, you could tweak the algorithm to develop puzzles (partially filled board that only have one solution). Here is what we are going to do:
 
     * Make a board builder
     * Make a solver
@@ -35,7 +35,7 @@ for r in range(9):
 What you'll discover is that it's hard to know how far to go back. If you do the analysis of where a series of choices go wrong, it's easy to find a case where the mistake needs to be corrected three or more cells before the one you are currently on. 
 
 ## Don't do that, do this
-So I tried to think outside the box. For one, it's actually easier to solve the problem in your Sudoku board is one dimensional. The other major idea was to think about things in terms of "branches" and then take a "depth-first" approach to exploring the branching space. 
+So I tried to think outside the box. For one, it's actually easier to solve the problem if your Sudoku board is one dimensional. The other major idea was to think about things in terms of "branches" and then take a "depth-first" approach to exploring the branching space. 
 
 I thought about the board not as a 81 length array but as a string that joined all the numbers together. A "branch" is a series of consecutive number choices and the question is what is the next set of branches that I could explore? So for instance, let's start all the way at the beginning. You're at the first uppermost left hand corner cell. What are your options? 1..9 of course. Let's choose "1" as my first branch. What are the next branches? {"12", "13", "14", ..., "19"}. Let's pop off the front and look at it's next branches: "12" -> {"123", "124", ... "129"}. And so on. 
 
