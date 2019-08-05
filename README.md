@@ -130,7 +130,7 @@ def next_seq(branch_blanks):
 ```
 
 ## Solve!
-So now we just need to pull all the pieces together and find a (at least one) solution given a starting point (encoded in a `branches` deque.
+So now we just need to pull all the pieces together and find a (at least one) solution given a starting point (encoded in a `branches` deque).
 
 ```python
 def solve(branches, out=1):
@@ -161,7 +161,7 @@ print_board(solved[0])
 ```
 
 ## Puzzle maker
-Below is the code that will make a puzzle based the following pseudo-code discussed: start with a completed board. Replace a random number in the grid with a blank and try to solve it. If there is only one solution, choose another random cell to mask. Keep doing this until you stumble on a mask that leads to more than one solution, in which case the state of the board before then last change is a good enough puzzle. 
+Below is the code that will make a puzzle based on the following pseudo-code: start with a completed board. Replace a random number in the grid with a blank and try to solve it. If there is only one solution, choose another random cell to mask. Keep doing this until you stumble on a mask that leads to more than one solution, in which case the state of the board before then last change is a good enough puzzle. 
 
 ```python
 puzzle = list(solved[0]) 
