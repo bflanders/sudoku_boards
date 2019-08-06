@@ -105,7 +105,7 @@ def unpicked(branch, c):
 I'll leave it up the reader to prove that this works. 
             
 ## Branching 
-So you we have a branch and we know where its blanks are. Let's take the first blank and now we know how to figure out what is unpicked, we need to create viable branches (if any) or detect a completed board. 
+So you have a branch and we know where its blanks are. Let's take the first blank and now we know how to figure out what is unpicked, we need to create viable branches (if any) or detect a completed board. 
 
 ```python
 def next_seq(branch_blanks):
