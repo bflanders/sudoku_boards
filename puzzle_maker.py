@@ -86,26 +86,34 @@ def solve(branches, out=1):
     return solutions
     
 solved = solve(branches)            
-print_board(solved[0])
 
 # Now make a puzzle
 # Remove one square at random
-puzzle = list(solved[0]) 
-blanks = [i for i in range(81)]
-shuffle(blanks)
-for i, z in enumerate(blanks):
-    k = puzzle[z]
-    puzzle[z] = ' '
-    # Check for single solution
-    branch = to_branch(''.join(puzzle))
-    branches = deque()
-    branches.append(branch)
-    solutions = solve(branches, out=2)
-    # If so, remove one more and check
-    if len(solutions)==1: continue
-    # If not, then put the square back and you're done
-    else:
-        puzzle[z] = k
-        break
-        
-print_board(puzzle)
+def puzzler(solution):
+    puzzle = list(solution[:]) 
+    blanks = [i for i in range(81)]
+    shuffle(blanks)
+    for i, z in enumerate(blanks):
+        k = puzzle[z]
+        puzzle[z] = ' '
+        # Check for single solution
+        branch = to_branch(''.join(puzzle))
+        branches = deque()
+        branches.append(branch)
+        solutions = solve(branches, out=2)
+        # If so, remove one more and check
+        if len(solutions)==1: continue
+        # If not, then put the square back and you're done
+        else:
+            puzzle[z] = k
+            break
+    blanks = sum([1 for c in puzzle if c==' '])
+    return puzzle, blanks, z
+
+counts = defaultdict(list)
+with open('puzzles.txt', 'a') as f:
+    for i in range(15000):
+        puzzle, blanks, z = puzzler(solved[0])
+        f.write(''.join(puzzle))
+        f.write(f', {str(blanks)}, {str(z)}\n')
+        print(i)   
